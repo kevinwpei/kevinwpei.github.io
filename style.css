@@ -1,0 +1,270 @@
+/* Colors follow chip layout editors: each section has a "layer" color.
+   Change the values here to restyle the whole site. */
+:root {
+  --bg: #f2f3f7;
+  --ink: #15182b;
+  --muted: #5a5f78;
+  --line: #c9ccda;
+  --metal: #2b55e0;     /* Projects */
+  --diffusion: #12875b; /* About */
+  --poly: #cf2f47;      /* Contact */
+  --via: #9a6f00;       /* GitHub */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1120;
+    --ink: #eceef8;
+    --muted: #9aa0bd;
+    --line: #2c3050;
+    --metal: #7d98ff;
+    --diffusion: #3ccb94;
+    --poly: #ff7085;
+    --via: #f0c23b;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 68rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* ---------- Intro ---------- */
+
+.intro { padding: clamp(3rem, 9vw, 7rem) 0 2.5rem; }
+
+.intro h1 {
+  margin: 0;
+  font-size: clamp(3.5rem, 13vw, 9.5rem);
+  font-weight: 800;
+  font-stretch: 80%;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+}
+
+.intro p {
+  max-width: 34ch;
+  margin: 1.75rem 0 0;
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+/* ---------- Floorplan (the menu) ---------- */
+
+.die {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  gap: 10px;
+  aspect-ratio: 16 / 9;
+  padding: 30px;
+  border: 1.5px solid var(--ink);
+}
+
+/* Pad ring around the edge of the die */
+.die::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(90deg, var(--line) 0 10px, transparent 10px 20px) top / 100% 10px no-repeat,
+    repeating-linear-gradient(90deg, var(--line) 0 10px, transparent 10px 20px) bottom / 100% 10px no-repeat,
+    repeating-linear-gradient(0deg, var(--line) 0 10px, transparent 10px 20px) left / 10px 100% no-repeat,
+    repeating-linear-gradient(0deg, var(--line) 0 10px, transparent 10px 20px) right / 10px 100% no-repeat;
+}
+
+.block {
+  --c: var(--metal);
+  --angle: 45deg;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(0.6rem, 1.6vw, 1.1rem);
+  border: 1.5px solid var(--c);
+  background:
+    repeating-linear-gradient(var(--angle),
+      color-mix(in srgb, var(--c) 32%, transparent) 0 1.5px,
+      transparent 1.5px 9px),
+    color-mix(in srgb, var(--c) 9%, var(--bg));
+  color: var(--ink);
+  text-decoration: none;
+  transition: background-color 120ms, color 120ms;
+}
+
+.block:hover,
+.block:focus-visible {
+  background: var(--c);
+  color: var(--bg);
+}
+
+.block strong {
+  font-size: clamp(1.25rem, 3.4vw, 2.6rem);
+  font-weight: 800;
+  font-stretch: 85%;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+.block span {
+  font-size: clamp(0.85rem, 1.3vw, 1rem);
+  line-height: 1.25;
+}
+
+.block-projects  { grid-area: 1 / 1 / 6 / 8; }
+.block-about     { grid-area: 1 / 8 / 4 / 13; --c: var(--diffusion); --angle: -45deg; }
+.block-contact   { grid-area: 4 / 8 / 6 / 13; --c: var(--poly); --angle: 90deg; }
+.block-github    { grid-area: 6 / 1 / 9 / 5;  --c: var(--via); --angle: 0deg; }
+
+/* Rows of standard cells filling the leftover area (decoration only) */
+.cells {
+  grid-area: 6 / 5 / 9 / 13;
+  background:
+    linear-gradient(0deg, var(--bg) 5px, transparent 5px) 0 0 / 100% 16px,
+    linear-gradient(90deg, var(--line) 7px, transparent 7px) 0 0 / 12px 100%;
+}
+
+.die-note {
+  margin: 0.9rem 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+/* One load moment: blocks get placed on the die in order */
+@media (prefers-reduced-motion: no-preference) {
+  .die > * {
+    animation: place 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i) * 90ms + 150ms);
+  }
+  @keyframes place {
+    from { opacity: 0; transform: scale(0.94); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+/* ---------- Sections ---------- */
+
+.section { padding: clamp(4rem, 9vw, 7rem) 0 0; }
+
+.section h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  margin: 0 0 1.5rem;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 800;
+  font-stretch: 85%;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* Swatch matches the section's block on the floorplan */
+.section h2::before {
+  content: "";
+  flex: none;
+  width: 0.55em;
+  height: 0.55em;
+  background: var(--c);
+}
+
+#projects { --c: var(--metal); }
+#about    { --c: var(--diffusion); }
+#contact  { --c: var(--poly); }
+
+.section p {
+  max-width: 60ch;
+  margin: 0 0 1rem;
+}
+
+.section a {
+  text-decoration-color: var(--c);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.2em;
+}
+
+.section a:hover { color: var(--c); }
+
+/* Shown until the first project is added */
+.empty {
+  padding: 2.5rem 1.5rem;
+  border: 1.5px dashed var(--line);
+  color: var(--muted);
+}
+
+.empty p { margin: 0; }
+
+/* Project entries (see the template in index.html) */
+.project {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 2rem;
+  padding: 2rem 0;
+  border-top: 1.5px solid var(--line);
+}
+
+.project img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1.5px solid var(--line);
+}
+
+.project h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.project .result { font-weight: 700; }
+
+.footer {
+  margin-top: clamp(4rem, 9vw, 7rem);
+  padding: 1.5rem 0 2.5rem;
+  border-top: 1.5px solid var(--line);
+  color: var(--muted);
+  font-size: 1rem;
+}
+
+/* ---------- Small screens ---------- */
+
+@media (max-width: 640px) {
+  .die {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: none;
+    grid-auto-rows: 7.5rem;
+    aspect-ratio: auto;
+    padding: 24px;
+  }
+  .block-projects { grid-area: auto / 1 / span 2 / 3; }
+  .block-about,
+  .block-contact  { grid-area: auto; }
+  .block-github   { grid-area: auto / 1 / auto / 3; }
+  .cells          { display: none; }
+  .project        { grid-template-columns: 1fr; gap: 1rem; }
+}
